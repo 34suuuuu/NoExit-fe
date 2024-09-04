@@ -33,3 +33,6 @@ jobs:
 
       - name: clear s3 bucket
         run: aws s3 rm s3://www.noexxit.store/ --recursive
+
+      - name: invalidate cloudfront caches
+        run: aws cloudfront create-invalidation --distribution-id E2PJLDAFFOKVX5 --paths "/*"
