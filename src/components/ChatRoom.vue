@@ -91,6 +91,7 @@ if (!window.webSocketClient) {
 export default {
     data() {
         return {
+            isSubscribed: false,
             roomId: this.$route.params.roomId,
             roomName: '',
             message: '',
@@ -229,6 +230,7 @@ export default {
             this.client.subscribe(`/topic/room/${this.roomId}`, (message) => {
                 const receivedMessage = JSON.parse(message.body);
                 this.messages.push(receivedMessage);
+                this.isSubscribed = true;//
                 this.$nextTick(() => {
                     this.scrollToBottom();
                 });
@@ -255,7 +257,7 @@ export default {
             });
         },
         sendMessage() {
-            if (this.message.trim() !== '') {
+            if (this.message.trim() !== '' && this.isSubscribed) {
                 const chatMessage = {
                     sender: this.sender,
                     content: this.message,
