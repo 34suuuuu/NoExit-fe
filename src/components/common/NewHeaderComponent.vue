@@ -158,7 +158,7 @@ export default {
             this.sse.addEventListener('CHAT_ROOM_INVITE', handleEvent);
 
             this.sse.onerror = () => {
-                console.log("SSE 연결이 끊어졌습니다. 재연결을 시도합니다.");
+                // console.log("SSE 연결이 끊어졌습니다. 재연결을 시도합니다.");
                 this.sse.close();
                 setTimeout(this.connectSSE, 3000); // 3초 후 재연결 시도
             };
