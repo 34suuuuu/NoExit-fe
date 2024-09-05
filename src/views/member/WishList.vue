@@ -2,10 +2,10 @@
     <v-app style="background-color: #1b1b1b; color:#ffffff;">
         <v-container>
             <v-row>
+                <MypageSideBarComponentVue :wishList="wishgamelist" />
                 <v-col>
                     <h2 class="font-weight-bold">WishList({{ wishgamelist.length }})</h2>
-                    <h2 class="font-weight-bold">WishList</h2>
-                    <v-divider :thickness="8"></v-divider>
+                    <v-divider :thickness="6"></v-divider>
                     <GameListComponent :games="wishgamelist" />
                     <GameListComponent />
                 </v-col>
@@ -17,17 +17,19 @@
 <script>
 import GameListComponent from '@/components/GameListComponent.vue'
 import axios from 'axios';
+import MypageSideBarComponentVue from '@/components/common/MypageSideBarComponent.vue';
 
 export default {
     components: {
-        GameListComponent,
+        GameListComponent, MypageSideBarComponentVue
     },
     data() {
         return {
             wishlist: [],
             gamelist: [],
             wishgamelist: [],
-            pageSize: 10,
+            //페이징 처리 했는데 페이징 번호가 보이지 않아서 myPage의 WishList가 12개밖에 보이지 않았음. 페이징처리를 없애던지 번호 마킹을 하던지 해야함.
+            pageSize: 50,
             currentPage: 1,
             totalPages: 1,
             pagesPerRange: 5,
@@ -53,7 +55,7 @@ export default {
                 const gameInfo = await axios.get(`${process.env.VUE_APP_API_BASIC_URL}/game/list`);
 
                 this.wishlist = response.data.result.content;
-                this.gamelist = gameInfo.data.result;
+                this.gamelist = gameInfo.data.result.content;
                 console.log(this.wishlist);
                 console.log(this.gamelist);
 

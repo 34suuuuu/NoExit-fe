@@ -1,40 +1,41 @@
-<template>
-    <v-container style="color:#ffffff;">
-        <v-row justify="center">
-            <MypageSideBarComponent />
-            <v-col>
-                <v-row justify="center">
-                    <v-col cols="12" md="8">
-                        <v-card-text>
-                            <v-row class="d-flex align-center justify-space-between">
-                                <v-col cols="auto" class="d-flex align-center img-area">
-                                    <v-avatar size="80" class="mr-3">
-                                        <img :src="memberInfoList.find(item => item.key === 'profileImage')?.value"
-                                            alt="프로필 이미지" @click="selectImage" class="profile-image" />
-                                    </v-avatar>
-                                    <input type="file" @change="onImageChange" accept="image/*"
-                                        style="display: none;" />
-                                </v-col>
-                                <v-col cols="auto" class="d-flex justify-end">
-                                    <v-btn v-if="!isEditing" @click="updateMember" class="update-btn">
-                                        프로필 수정
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
+    <template>
+        <v-container style="color:#ffffff;">
+            <v-row justify="center">
+                <MypageSideBarComponent />
+                <v-col>
+                    <v-row justify="center">
+                        <v-col cols="12" md="8">
+                            <v-card-text>
+                                <v-row class="d-flex align-center justify-space-between">
+                                    <v-col cols="auto" class="d-flex align-center img-area">
+                                        <v-avatar size="80" class="mr-3">
+                                            <img :src="memberInfoList.find(item => item.key === 'profileImage')?.value"
+                                                alt="프로필 이미지" @click="selectImage" class="profile-image"
+                                                display="none" />
+                                        </v-avatar>
+                                        <input type="file" ref="fileInput" @change="onImageChange" accept="image/*"
+                                            style="display: none;" />
+                                    </v-col>
+                                    <v-col cols="auto" class="d-flex justify-end">
+                                        <v-btn v-if="!isEditing" @click="updateMember" class="update-btn">
+                                            프로필 수정
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>
 
-                            <v-form v-for=" element in memberInfoList" :key="element.id" class="form-area">
-                                <v-text-field :label="element.key" v-model="element.value"
-                                    class="custom-text-field"></v-text-field>
-                            </v-form>
-                        </v-card-text>
-                    </v-col>
-                </v-row>
-            </v-col>
-        </v-row>
-    </v-container>
+                                <v-form v-for=" element in memberInfoList" :key="element.id" class="form-area">
+                                    <v-text-field v-if="element.key !== 'profileImage'" :label="element.key"
+                                        v-model="element.value" class="custom-text-field"></v-text-field>
+                                </v-form>
+                            </v-card-text>
+                        </v-col>
+                    </v-row>
+                </v-col>
+            </v-row>
+        </v-container>
 
 
-</template>
+    </template>
 
 <script>
 import axios from 'axios';
@@ -51,29 +52,57 @@ export default {
         }
     },
     async created() {
-        const response = await axios.get(`${process.env.VUE_APP_API_BASIC_URL}/member/myInfo`);
-        this.memberInfo = response.data.result;
-        this.memberInfoList = [
-            { key: "profileImage", value: this.memberInfo.profile_image },
-            { key: "username", value: this.memberInfo.username },
-            { key: "nickname", value: this.memberInfo.nickname },
-            { key: "phone_number", value: this.memberInfo.phone_number },
-            { key: "age", value: this.memberInfo.age },
-        ];
+        const role = localStorage.getItem('role');
+        if (role == 'USER') {
+            const response = await axios.get(`${process.env.VUE_APP_API_BASIC_URL}/member/myInfo`);
+            this.memberInfo = response.data.result;
+            this.memberInfoList = [
+                { key: "profileImage", value: this.memberInfo.profile_image },
+                { key: "username", value: this.memberInfo.username },
+                { key: "nickname", value: this.memberInfo.nickname },
+                { key: "phone_number", value: this.memberInfo.phone_number },
+                { key: "age", value: this.memberInfo.age },
+            ];
+        } else if (role == 'OWNER') {
+            const response = await axios.get(`${process.env.VUE_APP_API_BASIC_URL}/owner/myInfo`);
+            this.memberInfo = response.data.result;
+            this.memberInfoList = [
+                { key: "username", value: this.memberInfo.username },
+                { key: "storeName", value: this.memberInfo.storeName },
+                { key: "email", value: this.memberInfo.email },
+            ];
+        }
+
     },
     methods: {
         async updateMember() {
             try {
-                console.log(this.memberInfoList);
-                // 수정된 정보로 업데이트
-                const updateData = {};
+                let updateData = new FormData();
+                let data = {};
                 this.memberInfoList.forEach(element => {
-                    updateData[element.key] = element.value;
+                    if (element.key !== 'profileImage') {
+                        data[element.key] = element.value;
+                    }
                 });
-                await axios.post(`${process.env.VUE_APP_API_BASIC_URL}/member/update`, updateData);
-                window.location.reload();
+
+                console.log(data)
+                updateData.append("data", new Blob([JSON.stringify(data)], { type: "application/json" }));
+
+                const fileInput = this.$refs.fileInput;
+                if (fileInput && fileInput.files.length > 0) {
+                    updateData.append('file', fileInput.files[0]);
+                }
+                console.log("file" + fileInput.files[0])
+                console.log(fileInput.files[0] == null)
+
+                await axios.post(`${process.env.VUE_APP_API_BASIC_URL}/member/update`, updateData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                alert("프로필이 수정되었습니다.")
             } catch (e) {
-                const error_message = e.response.data.error_message
+                const error_message = e.response?.data?.error_message || 'An error occurred';
                 console.error(error_message);
                 alert(error_message);
             }
@@ -89,6 +118,7 @@ export default {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
+
                     const profileImage = this.memberInfoList.find(item => item.key === 'profileImage');
                     if (profileImage) {
                         profileImage.value = e.target.result;
