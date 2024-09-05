@@ -52,8 +52,6 @@ export default {
                 five: 5
             };
             return levels[difficulty?.toLowerCase()] || 1;
-            
-            
         },
     },
 };

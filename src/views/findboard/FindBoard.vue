@@ -199,6 +199,7 @@
                   />
                 </div>
               </v-row>
+
               <v-row class="d-flex justify-center" style="margin-bottom: 20px;">
                 <div
                   v-if="
@@ -305,6 +306,7 @@ export default {
     UpdateFindBoardModal,
     ImminentClosingBoards,
     AlertDialogComponent,
+
   },
   data() {
     return {
@@ -476,7 +478,7 @@ export default {
 
         if (alreadyParticipated) {
           this.showAlert("이미 참석한 게시글 입니다.");
-          return;
+         return;
         }
 
         // 참가 처리
@@ -599,6 +601,7 @@ export default {
         console.log("Result List:", resultList, resultList.length);
         if (resultList.length === 0) {
           this.showAlert("검색 결과가 존재하지 않습니다");
+
           this.searchTriggered = false;
           return;
         }
