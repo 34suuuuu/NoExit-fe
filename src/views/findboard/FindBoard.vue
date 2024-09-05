@@ -68,7 +68,7 @@
               <!-- 작성자 이름 -->
 
               <!-- 아바타 -->
-              <v-avatar size="120" style="overflow: hidden; border-radius: 50%;">
+              <v-avatar size="100" style="overflow: hidden; border-radius: 50%;">
                 <img :src="f.imagePath" alt="프로필 이미지" class="profile-image"
                   style="width: 100%; height: 100%; object-fit: cover; object-position: center;" />
               </v-avatar>
