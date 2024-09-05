@@ -185,7 +185,8 @@ export default {
                     console.log('WebSocket 이 연결되었습니다.');
                     window.webSocketClient = this.client; // 전역 설정
                     this.subscribeToRoom();
-
+                    this.ensureRoomSubscription(this.roomId);
+                    
                     // sessionStorage에 저장된 값이 없을 때만 join 메시지를 보냄
                     if (!sessionStorage.getItem(`joined_${this.roomId}`)) {
                         this.joinRoom();
@@ -213,11 +214,21 @@ export default {
 
             this.client.activate();
         },
+
+        ensureRoomSubscription(roomId) {
+            axios.post(`${process.env.VUE_APP_API_BASIC_URL}/chat/ensure-subscription`, { roomId })
+                .then(response => {
+                    console.log('방 구독이 유지되었습니다');
+                })
+                .catch(error => {
+                    console.error('Failed to ensure room subscription:', error);
+                });
+        },
+
         subscribeToRoom() {
             this.client.subscribe(`/topic/room/${this.roomId}`, (message) => {
                 const receivedMessage = JSON.parse(message.body);
                 this.messages.push(receivedMessage);
-
                 this.$nextTick(() => {
                     this.scrollToBottom();
                 });
