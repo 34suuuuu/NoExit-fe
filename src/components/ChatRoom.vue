@@ -94,7 +94,7 @@ export default {
             message: '',
             messages: [],
             sender: '',
-            client: null
+            client: null,
             isWebSocketConnected: false
         };
     },

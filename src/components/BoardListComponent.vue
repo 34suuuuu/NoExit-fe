@@ -11,7 +11,7 @@
                 item-title="text"
                 item-value="value"
                 dense
-                style="background-color: #white; color: white;"
+                style="background-color: white; color: white;"
               >
               </v-select>
             </v-col>
@@ -21,7 +21,7 @@
                 label="Search"
                 :rules="[required]"
                 dense
-                style="background-color: #white; color: white;"
+                style="background-color: white; color: white;"
               ></v-text-field>
             </v-col>
             <v-col cols="auto">
