@@ -217,8 +217,12 @@ export default {
 
         ensureRoomSubscription(roomId) {
             axios.post(`${process.env.VUE_APP_API_BASIC_URL}/chat/ensure-subscription`, { roomId })
-                .then(() => {
-                    console.log('방 구독이 유지되었습니다');
+                .then(response => {
+                    if (response.data.success) {
+                        console.log('방 구독이 성공적으로 유지되었습니다');
+                    } else {
+                        console.warn('구독 요청이 완료되었으나 성공하지 않았습니다:', response.data);
+                    }
                 })
                 .catch(error => {
                     console.error('Failed to ensure room subscription:', error);
