@@ -85,7 +85,6 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
 import VueJwtDecode from "vue-jwt-decode";
-let webSocketClient = null;
 
 export default {
     data() {
@@ -96,6 +95,7 @@ export default {
             messages: [],
             sender: '',
             client: null
+            isWebSocketConnected: false
         };
     },
     created() {
@@ -110,18 +110,7 @@ export default {
             });
         }
     },
-    beforeDestroy() {
-        if (webSocketClient) {
-            webSocketClient.deactivate();  // WebSocket 연결 해제
-            webSocketClient = null;  // 연결 해제 후 null로 설정
-        }
-    },
-    unmounted() {
-        if (webSocketClient) {
-            webSocketClient.deactivate();  // WebSocket 연결 해제
-            webSocketClient = null;  // 연결 해제 후 null로 설정
-        }
-    },
+    
     methods: {
         monitorWebSocketConnection() {
             setInterval(() => {
@@ -172,57 +161,57 @@ export default {
         },
         
         connectWebSocket() {
-    // 이미 WebSocket이 연결되어 있으면 새로운 연결을 만들지 않음
-    if (webSocketClient && webSocketClient.connected) {
-        console.log('WebSocket already connected.');
-        return;
-    }
 
-    const socket = new SockJS(`${process.env.VUE_APP_API_BASIC_URL}/ws-chat`);
-    const token = localStorage.getItem('token');
-
-    webSocketClient = new Client({
-        webSocketFactory: () => socket,
-        connectHeaders: {
-            'Authorization': `Bearer ${token}`
-        },
-        reconnectDelay: 5000, 
-        onConnect: () => {
-            this.subscribeToRoom();
-
-            // sessionStorage에 저장된 값이 없을 때만 join 메시지를 보냄
-            if (!sessionStorage.getItem(`joined_${this.roomId}`)) {
-                this.joinRoom();
-                sessionStorage.setItem(`joined_${this.roomId}`, true);
+            if (this.client && this.client.connected) {
+                console.log('WebSocket already connected.');
+                return;
             }
-        },
-        onDisconnect: () => { 
-            console.error('WebSocket disconnected, attempting to reconnect...');
-        },
-        onStompError: (frame) => {
-            console.error('Broker reported error: ' + frame.headers['message']);
-            console.error('Additional details: ' + frame.body);
-        },
-        onWebSocketClose: (event) => {
-            if (event.code === 403) {
-                console.error('Connection closed with 403 error. Token might be invalid or expired.');
-                this.refreshTokenAndReconnect();
-            }
-        },
-        onError: (error) => {
-            console.error('WebSocket connection error:', error);
-        }
-    });
 
-    webSocketClient.activate();
-},
+            const socket = new SockJS(`${process.env.VUE_APP_API_BASIC_URL}/ws-chat`);
+            const token = localStorage.getItem('token');
 
+            this.client = new Client({
+                webSocketFactory: () => socket,
+                connectHeaders: {
+                    'Authorization': `Bearer ${token}`
+                },
+                reconnectDelay: 5000, //
+                onConnect: () => {
+                    this.subscribeToRoom();
+
+                    // sessionStorage에 저장된 값이 없을 때만 join 메시지를 보냄
+                    if (!sessionStorage.getItem(`joined_${this.roomId}`)) {
+                        this.joinRoom();
+                        sessionStorage.setItem(`joined_${this.roomId}`, true);
+                    }
+                },
+                onDisconnect: () => { 
+                    this.isWebSocketConnected = false;
+                    console.error('WebSocket disconnected, attempting to reconnect...');
+                },
+                onStompError: (frame) => {
+                    console.error('Broker reported error: ' + frame.headers['message']);
+                    console.error('Additional details: ' + frame.body);
+                },
+                onWebSocketClose: (event) => {
+                    if (event.code === 403) {
+                        console.error('Connection closed with 403 error. Token might be invalid or expired.');
+                        this.refreshTokenAndReconnect();
+                    }
+                },
+                onError: (error) => {
+                    console.error('WebSocket connection error:', error);
+                }
+            });
+
+            this.client.activate();
+        },
         subscribeToRoom() {
             this.client.subscribe(`/topic/room/${this.roomId}`, (message) => {
                 const receivedMessage = JSON.parse(message.body);
                 this.messages.push(receivedMessage);
 
-                this.$nextTick(() => {//
+                this.$nextTick(() => {
                     this.scrollToBottom();
                 });
             });
