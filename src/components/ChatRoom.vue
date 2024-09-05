@@ -110,6 +110,20 @@ export default {
         }
     },
     methods: {
+        monitorWebSocketConnection() {
+        // 일정 주기로 WebSocket 연결 상태를 체크하는 인터벌 설정
+            setInterval(() => {
+                if (!this.client.connected) {
+                    console.warn('WebSocket is not connected, reconnecting...');
+                    this.connectWebSocket();  // WebSocket이 끊긴 상태면 재연결 시도
+                } else {
+                    console.log('WebSocket connection is healthy.');
+                }
+            }, 10000);  // 10초마다 연결 상태를 확인
+        },    
+
+
+
         setSenderFromToken() {
             const token = localStorage.getItem('token');
             if (token) {
@@ -155,7 +169,7 @@ export default {
                 connectHeaders: {
                     'Authorization': `Bearer ${token}`
                 },
-                reconnectDelay: 5000,
+                reconnectDelay: 5000, ////
                 onConnect: () => {
                     this.subscribeToRoom();
 
@@ -165,13 +179,19 @@ export default {
                         sessionStorage.setItem(`joined_${this.roomId}`, true);
                     }
                 },
+                onDisconnect: () => { //
+                    console.error('WebSocket disconnected, attempting to reconnect...');
+                    this.connectWebSocket();
+                },
                 onStompError: (frame) => {
                     console.error('Broker reported error: ' + frame.headers['message']);
                     console.error('Additional details: ' + frame.body);
+                    this.connectWebSocket(); // 
                 },
                 onWebSocketClose: (event) => {
                     if (event.code === 403) {
                         console.error('Connection closed with 403 error. Token might be invalid or expired.');
+                        this.refreshTokenAndReconnect(); //
                     }
                 },
                 onError: (error) => {
