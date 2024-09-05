@@ -240,15 +240,6 @@ export default {
                 this.client.deactivate();
             }
         },
-        ensureRoomSubscription(roomId) {
-            axios.post(`${process.env.VUE_APP_API_BASIC_URL}/chat/ensure-subscription`, { roomId })
-                .then(() => {
-                    console.log('Room subscription ensured');
-                })
-                .catch(error => {
-                    console.error('Failed to ensure room subscription:', error);
-                });
-        },
 
 
         joinRoom() {
