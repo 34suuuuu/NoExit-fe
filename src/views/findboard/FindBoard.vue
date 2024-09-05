@@ -1,56 +1,26 @@
 <template>
   <v-container class="justify-center">
-    <v-row
-      :style="{ color: 'white' }"
-      class="d-flex justify-center"
-    >
+    <v-row :style="{ color: 'white' }" class="d-flex justify-center">
       <v-col>
         <v-form @submit.prevent="loadFindBoard">
           <v-row>
             <v-col cols="auto">
-              <v-select
-                v-model="searchType"
-                :items="searchOptions"
-                item-title="text"
-                item-value="value"
-                dense
-              ></v-select>
+              <v-select v-model="searchType" :items="searchOptions" item-title="text" item-value="value"
+                dense></v-select>
             </v-col>
             <v-col>
-              <v-text-field
-                v-model="searchValue"
-                label="Search"
-                :rules="[required]"
-                dense
-              ></v-text-field>
+              <v-text-field v-model="searchValue" label="Search" :rules="[required]" dense></v-text-field>
             </v-col>
             <v-col cols="auto">
               <v-col cols="auto">
                 <v-row>
-                  <v-btn
-                    height="60"
-                    type="submit"
-                    color="pink"
-                    @click="onSearchButtonClick"
-                    >검색</v-btn
-                  >
+                  <v-btn height="60" type="submit" color="pink" @click="onSearchButtonClick">검색</v-btn>
                   <v-spacer></v-spacer>
-                  <v-btn
-                    height="60"
-
-                    color="pink"
-                    style="margin-left: 8px;"
-                    @click="openCreateModal"
-                    v-if="userRole == 'USER' && isLogin"
-                    
-                    >작성하기</v-btn
-                  >
+                  <v-btn height="60" color="pink" style="margin-left: 8px;" @click="openCreateModal"
+                    v-if="userRole == 'USER' && isLogin">작성하기</v-btn>
                 </v-row>
 
-                <CreateFindBoardModal
-                  :isOpen="isCreateModalOpen"
-                  @close="closeCreateModal"
-                />
+                <CreateFindBoardModal :isOpen="isCreateModalOpen" @close="closeCreateModal" />
               </v-col>
             </v-col>
           </v-row>
@@ -59,13 +29,11 @@
 
       <!-- 마감 임박 게시글 섹션 -->
       <v-col cols="12">
-        <h1
-          :style="{
-            color: 'white',
-            fontSize: '2.5rem',
-            fontWeight: 'bold',
-          }"
-        >
+        <h1 :style="{
+          color: 'white',
+          fontSize: '2.5rem',
+          fontWeight: 'bold',
+        }">
           ESCAPE WITH ME😍
         </h1>
         <ImminentClosingBoards />
@@ -82,53 +50,30 @@
 
       <!-- 게시글 리스트 -->
       <v-row justify="center" v-else>
-        <v-col
-          cols="12"
-          md="6"
-          v-for="f in findBoardList"
-          :key="f.id"
-          class="d-flex justify-center"
-        >
-          <v-card
-            :style="{
-              color: 'white',
-              backgroundColor: '#1b1b1b',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)',
-              marginTop: '10px',
-              padding: '10px',
-              height: '320px',
-              width: '100%',
-            }"
-            :class="{
+        <v-col cols="12" md="6" v-for="f in findBoardList" :key="f.id" class="d-flex justify-center">
+          <v-card :style="{
+            color: 'white',
+            backgroundColor: '#1b1b1b',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)',
+            marginTop: '10px',
+            padding: '10px',
+            height: '320px',
+            width: '100%',
+          }" :class="{
               'expired-card':
                 getTimeDifferenceInMinutes(f.expirationTime) === '마감됨',
-            }"
-            variant="outlined"
-            class="pa-2 d-flex align-center"
-            outlined
-            rounded="lg"
-          >
-            <v-col
-              cols="3"
-              class="d-flex flex-column align-center justify-center"
-            >
+            }" variant="outlined" class="pa-2 d-flex align-center" outlined rounded="lg">
+            <v-col cols="3" class="d-flex flex-column align-center justify-center">
               <!-- 작성자 이름 -->
 
               <!-- 아바타 -->
               <v-avatar size="120" style="overflow: hidden; border-radius: 50%;">
-                <img
-                  :src="f.imagePath"
-                  alt="프로필 이미지"
-                  class="profile-image"
-                  style="width: 100%; height: 100%; object-fit: cover; object-position: center;"
-                />
+                <img :src="f.imagePath" alt="프로필 이미지" class="profile-image"
+                  style="width: 100%; height: 100%; object-fit: cover; object-position: center;" />
               </v-avatar>
 
-              <v-row
-                class="d-flex flex-column align-start"
-                style="margin-top: 16px"
-              >
+              <v-row class="d-flex flex-column align-start" style="margin-top: 16px">
                 <!-- margin-top으로 적절한 여백만 주고, 겹침 방지 -->
                 <div>
                   <span class="writer-text">
@@ -159,54 +104,34 @@
               </v-row>
             </v-col>
 
-            <v-col 
-            cols="2" 
-            class="d-flex 
-            flex-column justify-between"
-            style="padding-top: 30px; margin-right: 30px;"
-
-            >
+            <v-col cols="2" class="d-flex 
+            flex-column justify-between" style="padding-top: 30px; margin-right: 30px;">
               <v-row justify="end" style="margin-bottom: 20px;">
                 <div v-if="f.isAuthor" style="margin-top: -65px">
                   <!-- 상단으로 붙이기 위해 margin-top을 음수로 설정 -->
-                  <v-icon
-                    style="display: inline-block; vertical-align: top"
-                    @click="openUpdateModal(f)"
-                    :style="{
-                      color: 'gray',
-                      cursor: 'pointer',
-                      fontSize: '24px',
-                    }"
-                  >
+                  <v-icon style="display: inline-block; vertical-align: top" @click="openUpdateModal(f)" :style="{
+                    color: 'gray',
+                    cursor: 'pointer',
+                    fontSize: '24px',
+                  }">
                     mdi-pencil
                   </v-icon>
-                  <v-icon
-                    @click="deleteFB(f.id)"
-                    :style="{
-                      color: 'gray',
-                      cursor: 'pointer',
-                      fontSize: '24px',
-                    }"
-                    style="display: inline-block; vertical-align: top"
-                  >
+                  <v-icon @click="deleteFB(f.id)" :style="{
+                    color: 'gray',
+                    cursor: 'pointer',
+                    fontSize: '24px',
+                  }" style="display: inline-block; vertical-align: top">
                     mdi-delete
                   </v-icon>
-                  <UpdateFindBoardModal
-                    :isOpen="isUpdateModalOpen"
-                    :findBoard="selectedFindBoard"
-                    @close="closeUpdateModal"
-                    @updated="loadFindBoard"
-                  />
+                  <UpdateFindBoardModal :isOpen="isUpdateModalOpen" :findBoard="selectedFindBoard"
+                    @close="closeUpdateModal" @updated="loadFindBoard" />
                 </div>
               </v-row>
 
               <v-row class="d-flex justify-center" style="margin-bottom: 20px;">
-                <div
-                  v-if="
-                    getTimeDifferenceInMinutes(f.expirationTime) !== '마감됨'
-                  "
-                  style="text-align: right"
-                >
+                <div v-if="
+                  getTimeDifferenceInMinutes(f.expirationTime) !== '마감됨'
+                " style="text-align: right">
                   <p>{{ getTimeDifferenceInMinutes(f.expirationTime) }}</p>
                 </div>
                 <div v-else style="text-align: right">
@@ -221,14 +146,9 @@
               </v-card-actions> -->
               <!-- 참여 버튼 -->
               <v-card-actions>
-                <v-btn
-                  width="180"
-                  height="40"
-                  color="black"
-                  :disabled="getTimeDifferenceInMinutes(f.expirationTime) <= 0"
-                  @click="participateInFindBoard(f.id)"
-                  style="background-color: #FF0066; color: white;"
-                >
+                <v-btn width="180" height="40" color="black"
+                  :disabled="getTimeDifferenceInMinutes(f.expirationTime) <= 0" @click="participateInFindBoard(f.id)"
+                  style="background-color: #FF0066; color: white;">
                   JOIN
                 </v-btn>
               </v-card-actions>
@@ -242,33 +162,18 @@
 
         <v-col cols="12">
           <div class="pagination-controls text-center">
-            <span
-              class="pagination-arrow"
-              @click="prevPageRange"
-              :class="{ disabled: currentPageRangeStart <= 1 }"
-            >
+            <span class="pagination-arrow" @click="prevPageRange" :class="{ disabled: currentPageRangeStart <= 1 }">
               <v-icon small>{{
-                currentPageRangeStart <= 1
-                  ? "mdi-menu-left"
-                  : "mdi-chevron-left"
-              }}</v-icon>
+                currentPageRangeStart <= 1 ? "mdi-menu-left" : "mdi-chevron-left" }}</v-icon>
             </span>
 
-            <span
-              v-for="page in visiblePages"
-              :key="page"
-              @click="setPage(page)"
-              :class="{ 'active-page': currentPage === page }"
-              class="pagination-page"
-            >
+            <span v-for="page in visiblePages" :key="page" @click="setPage(page)"
+              :class="{ 'active-page': currentPage === page }" class="pagination-page">
               {{ page }}
             </span>
 
-            <span
-              class="pagination-arrow"
-              @click="nextPageRange"
-              :class="{ disabled: currentPageRangeEnd >= totalPages }"
-            >
+            <span class="pagination-arrow" @click="nextPageRange"
+              :class="{ disabled: currentPageRangeEnd >= totalPages }">
               <v-icon small>{{
                 currentPageRangeEnd >= totalPages
                   ? "mdi-menu-right"
@@ -284,11 +189,7 @@
       <v-progress-circular indeterminate color="primary"></v-progress-circular>
     </div>
 
-        <AlertDialogComponent
-        ref="alertDialog"
-        :title="dialogTitle"
-        :message="dialogMessage"
-      />
+    <AlertDialogComponent ref="alertDialog" :title="dialogTitle" :message="dialogMessage" />
 
   </v-container>
 </template>
@@ -374,7 +275,7 @@ export default {
       this.dialogTitle = title;
       this.dialogMessage = message;
       this.$refs.alertDialog.openDialog();
-      
+
     },
 
 
@@ -430,16 +331,15 @@ export default {
     },
     formatDateTime(isoString) {
       const date = new Date(isoString);
-      const formattedDate = `${date.getFullYear()}년 ${
-        date.getMonth() + 1
-      }월 ${date.getDate()}일`;
+      const formattedDate = `${date.getFullYear()}년 ${date.getMonth() + 1
+        }월 ${date.getDate()}일`;
       const formattedTime = `${date
         .getHours()
         .toString()
         .padStart(2, "0")}시 ${date
-        .getMinutes()
-        .toString()
-        .padStart(2, "0")}분`;
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}분`;
       return `${formattedDate} ${formattedTime}`;
     },
     async deleteFB(fbId) {
@@ -449,7 +349,7 @@ export default {
         );
         console.log("삭제 완료:", response.data);
         this.showAlert("삭제 완료");
-        
+
         // window.location.reload();
         this.findBoardList = this.findBoardList.filter((fb) => fb.id !== fbId);
       } catch (error) {
@@ -478,7 +378,7 @@ export default {
 
         if (alreadyParticipated) {
           this.showAlert("이미 참석한 게시글 입니다.");
-         return;
+          return;
         }
 
         // 참가 처리
@@ -554,7 +454,7 @@ export default {
           };
 
           const response = await axios.get(
-            "${process.env.VUE_APP_API_BASIC_URL}/findboard/list",
+            `${process.env.VUE_APP_API_BASIC_URL}/findboard/list`,
             { params }
           );
           const resultList = response.data.result.content;
@@ -679,7 +579,7 @@ body,
 }
 
 .pagination-page.active-page {
-  background-color:#FF0066;
+  background-color: #FF0066;
   color: rgb(254, 254, 254);
 }
 

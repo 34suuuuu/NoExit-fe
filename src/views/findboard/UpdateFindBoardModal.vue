@@ -211,7 +211,7 @@ export default {
     },
     async fetchStores() {
       try {
-        const response = await axios.get("${process.env.VUE_APP_API_BASIC_URL}/store/list");
+        const response = await axios.get(`${process.env.VUE_APP_API_BASIC_URL}/store/list`);
         this.stores = response.data.result;
       } catch (error) {
         console.error("Error fetching stores:", error);
