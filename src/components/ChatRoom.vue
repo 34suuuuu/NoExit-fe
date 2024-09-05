@@ -85,7 +85,6 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
 import VueJwtDecode from "vue-jwt-decode";
-let webSocketClient = null;
 export default {
     data() {
         return {
@@ -159,10 +158,7 @@ export default {
         },
         
         connectWebSocket() {
-            if (webSocketClient && webSocketClient.connected) {
-                console.log('WebSocket already connected.');
-                return;
-            }
+
             const socket = new SockJS(`${process.env.VUE_APP_API_BASIC_URL}/ws-chat`);
             const token = localStorage.getItem('token');
 
