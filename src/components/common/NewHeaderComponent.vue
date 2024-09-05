@@ -79,7 +79,7 @@
                                 }}</v-list-item-title>
                             <v-list-item-text style="color: #919191; font-weight: 300; font-size:14px">{{
                                 formatDateTime(notification.createdTime)
-                                }}</v-list-item-text>
+                            }}</v-list-item-text>
 
                         </v-list-item-content>
                     </v-list-item>

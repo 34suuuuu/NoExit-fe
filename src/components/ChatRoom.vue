@@ -13,40 +13,36 @@
         <v-row class="message-list" ref="messageList" style="background-color: #1b1b1b">
             <v-col cols="12">
                 <v-list style="background-color: #1b1b1b">
-                    <v-list-item
-                        v-for="(message, index) in messages"
-                        :key="index"
-                        :class="{
-                            'message-sent': message.sender === sender && message.type !== 'JOIN',
-                            'message-received': message.sender !== sender && message.type !== 'JOIN',
-                            'join-message': message.type === 'JOIN'
-                        }"
-                    >
+                    <v-list-item v-for="(message, index) in messages" :key="index" :class="{
+                        'message-sent': message.sender === sender && message.type !== 'JOIN',
+                        'message-received': message.sender !== sender && message.type !== 'JOIN',
+                        'join-message': message.type === 'JOIN'
+                    }">
                         <v-list-item-content :class="message.type === 'JOIN' ? 'join-message-container' : ''">
-                            <div
-                                :class="{
-                                    'bubble-sent-container': message.sender === sender && message.type !== 'JOIN',
-                                    'bubble-received-container': message.sender !== sender && message.type !== 'JOIN'
-                                }"
-                            >
-                                <div v-if="message.sender === sender && message.type !== 'JOIN'" class="message-header right-align">
+                            <div :class="{
+                                'bubble-sent-container': message.sender === sender && message.type !== 'JOIN',
+                                'bubble-received-container': message.sender !== sender && message.type !== 'JOIN'
+                            }">
+                                <div v-if="message.sender === sender && message.type !== 'JOIN'"
+                                    class="message-header right-align">
                                     <span class="sender-name">{{ message.senderName }}</span>
-                                    <v-img v-if="message.senderProfileImage" :src="message.senderProfileImage" alt="Profile" class="profile-image" />
+                                    <v-img v-if="message.senderProfileImage" :src="message.senderProfileImage"
+                                        alt="Profile" class="profile-image" />
                                 </div>
-                                <div v-else-if="message.sender !== sender && message.type !== 'JOIN'" class="message-header left-align">
-                                    <v-img v-if="message.senderProfileImage" :src="message.senderProfileImage" alt="Profile" class="profile-image" />
+                                <div v-else-if="message.sender !== sender && message.type !== 'JOIN'"
+                                    class="message-header left-align">
+                                    <v-img v-if="message.senderProfileImage" :src="message.senderProfileImage"
+                                        alt="Profile" class="profile-image" />
                                     <span class="sender-name">{{ message.senderName }}</span>
                                 </div>
-                                <div
-                                    :class="{
-                                        'bubble-sent': message.sender === sender && message.type !== 'JOIN',
-                                        'bubble-received': message.sender !== sender && message.type !== 'JOIN',
-                                        'bubble-join': message.type === 'JOIN'
-                                    }"
-                                    class="message-bubble"
-                                >
+                                <div :class="{
+                                    'bubble-sent': message.sender === sender && message.type !== 'JOIN',
+                                    'bubble-received': message.sender !== sender && message.type !== 'JOIN',
+                                    'bubble-join': message.type === 'JOIN'
+                                }" class="message-bubble">
                                     <v-list-item-title>
-                                        {{ typeof message.content === 'object' ? JSON.stringify(message.content) : message.content }}
+                                        {{ typeof message.content === 'object' ? JSON.stringify(message.content) :
+                                            message.content }}
                                     </v-list-item-title>
                                     <v-list-item-subtitle v-if="message.type !== 'JOIN'" class="message-time">
                                         {{ formatDate(message.timestamp) }}
@@ -62,14 +58,8 @@
         <!-- 입력 영역 -->
         <v-row class="input-row">
             <v-col cols="10">
-                <v-text-field
-                    v-model="message"
-                    label=""
-                    @keyup.enter="sendMessage"
-                    outlined
-                    color="white"
-                    class="input-field"
-                ></v-text-field>
+                <v-text-field v-model="message" label="" @keyup.enter="sendMessage" outlined color="white"
+                    class="input-field"></v-text-field>
             </v-col>
             <v-col cols="2">
                 <v-btn @click="sendMessage" color="#1b1b1b" class="send-btn">
@@ -112,9 +102,10 @@ export default {
             });
         }
     },
-    
+
     methods: {
         monitorWebSocketConnection() {
+            // 일정 주기로 WebSocket 연결 상태를 체크하는 인터벌 설정
             setInterval(() => {
                 if (!this.client.connected) {
                     console.warn('WebSocket is not connected, reconnecting...');
@@ -123,7 +114,7 @@ export default {
                     console.log('WebSocket connection is healthy.');
                 }
             }, 5000);  // 10초마다 연결 상태를 확인
-        },    
+        },
 
         setSenderFromToken() {
             const token = localStorage.getItem('token');
@@ -161,7 +152,7 @@ export default {
                 console.error("Failed to fetch messages:", error);
             }
         },
-        
+
         connectWebSocket() {
 
             if (window.webSocketClient && window.webSocketClient.connected) {
@@ -171,7 +162,7 @@ export default {
                 return;
             }
 
-        
+
             const socket = new SockJS(`${process.env.VUE_APP_API_BASIC_URL}/ws-chat`);
             const token = localStorage.getItem('token');
 
@@ -193,7 +184,7 @@ export default {
                         sessionStorage.setItem(`joined_${this.roomId}`, true);
                     }
                 },
-                onDisconnect: () => { 
+                onDisconnect: () => {
                     console.error('WebSocket disconnected.');
                     window.webSocketClient = null;
                 },
@@ -230,7 +221,7 @@ export default {
         },
 
         subscribeToRoom() {
-            const roomTopic = `/topic/room/${this.roomId}`; 
+            const roomTopic = `/topic/room/${this.roomId}`;
             this.client.subscribe(roomTopic, (message) => {
                 const receivedMessage = JSON.parse(message.body);
                 this.messages.push(receivedMessage);
@@ -276,7 +267,6 @@ export default {
                 this.$nextTick(() => {
                     this.scrollToBottom();
                 });
-
             }
         },
         formatDate(timestamp) {
@@ -290,7 +280,7 @@ export default {
             let minutes = date.getMinutes();
 
             const ampm = hours >= 12 ? '오후' : '오전';
-            
+
             hours = hours % 12;
             hours = hours ? hours : 12;
 
@@ -369,6 +359,7 @@ export default {
     white-space: pre-wrap;
     overflow-wrap: break-word;
 }
+
 .message-bubble {
     white-space: pre-wrap !important;
     word-wrap: break-word !important;
@@ -488,5 +479,4 @@ export default {
 .message-list::-webkit-scrollbar-thumb:hover {
     background-color: #ff3385;
 }
-
 </style>
