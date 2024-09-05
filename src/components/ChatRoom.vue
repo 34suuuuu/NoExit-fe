@@ -111,18 +111,15 @@ export default {
     },
     methods: {
         monitorWebSocketConnection() {
-        // 일정 주기로 WebSocket 연결 상태를 체크하는 인터벌 설정
             setInterval(() => {
                 if (!this.client.connected) {
                     console.warn('WebSocket is not connected, reconnecting...');
-                    this.connectWebSocket();  // WebSocket이 끊긴 상태면 재연결 시도
+                    this.connectWebSocket();
                 } else {
                     console.log('WebSocket connection is healthy.');
                 }
             }, 10000);  // 10초마다 연결 상태를 확인
         },    
-
-
 
         setSenderFromToken() {
             const token = localStorage.getItem('token');
@@ -149,7 +146,7 @@ export default {
                 // 각 메시지에 대해 추가 정보 요청
                 for (let message of this.messages) {
                     if (message.sender !== this.sender && message.type !== 'JOIN') {
-                        const userResponse = await axios.get(`${process.env.VUE_APP_API_BASIC_URL}/member/${message.sender}`);
+                        const userResponse = await axios.get(`${process.env.VUE_APP_API_BASIC_URL}/users/${message.sender}`);
                         message.senderProfileImage = userResponse.data.profileImage; // 프로필 이미지 URL
                         message.senderName = userResponse.data.name; // 사용자 이름
                     }
@@ -169,7 +166,7 @@ export default {
                 connectHeaders: {
                     'Authorization': `Bearer ${token}`
                 },
-                reconnectDelay: 5000, ////
+                reconnectDelay: 5000, //
                 onConnect: () => {
                     this.subscribeToRoom();
 
@@ -205,6 +202,10 @@ export default {
             this.client.subscribe(`/topic/room/${this.roomId}`, (message) => {
                 const receivedMessage = JSON.parse(message.body);
                 this.messages.push(receivedMessage);
+
+                this.$nextTick(() => {//
+                    this.scrollToBottom();
+                });
             });
         },
         joinRoom() {

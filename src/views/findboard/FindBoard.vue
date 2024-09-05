@@ -50,7 +50,7 @@
 
       <!-- 게시글 리스트 -->
       <v-row justify="center" v-else>
-        <v-col cols="12" md="4" lg="3" v-for="f in findBoardList" :key="f.id" class="d-flex justify-center">
+        <v-col cols="12" md="6" v-for="f in findBoardList" :key="f.id" class="d-flex justify-center">
           <v-card :style="{
             color: 'white',
             backgroundColor: '#1b1b1b',
