@@ -226,6 +226,7 @@ export default {
         },
 
         subscribeToRoom() {
+            const roomTopic = `/topic/room/${this.roomId}`; 
             this.client.subscribe(`/topic/room/${this.roomId}`, (message) => {
                 const receivedMessage = JSON.parse(message.body);
                 this.messages.push(receivedMessage);
