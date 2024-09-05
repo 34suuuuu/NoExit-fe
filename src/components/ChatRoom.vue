@@ -158,6 +158,10 @@ export default {
             }
         },
         connectWebSocket() {
+            if (webSocketClient && webSocketClient.connected) {
+                console.log('WebSocket already connected.');
+                return;
+            }
             const socket = new SockJS(`${process.env.VUE_APP_API_BASIC_URL}/ws-chat`);
             const token = localStorage.getItem('token');
 
@@ -178,21 +182,23 @@ export default {
                 },
                 onDisconnect: () => { //
                     console.error('WebSocket disconnected, attempting to reconnect...');
-                    this.connectWebSocket();
+                    webSocketClient = null;
                 },
                 onStompError: (frame) => {
                     console.error('Broker reported error: ' + frame.headers['message']);
                     console.error('Additional details: ' + frame.body);
-                    this.connectWebSocket(); // 
+                    webSocketClient = null;
                 },
                 onWebSocketClose: (event) => {
                     if (event.code === 403) {
                         console.error('Connection closed with 403 error. Token might be invalid or expired.');
-                        this.refreshTokenAndReconnect(); //
+                        this.refreshTokenAndReconnect();
+                        webSocketClient = null;  // WebSocket이 닫힌 경우 null로 설정
                     }
                 },
                 onError: (error) => {
                     console.error('WebSocket connection error:', error);
+                    webSocketClient = null;
                 }
             });
 
