@@ -1,7 +1,7 @@
 <template>
     <v-container class="chat-room-container">
         <v-toolbar flat color="#1b1b1b" dark>
-            <v-btn icon @click="closeChatModal" class="mr-2">
+            <v-btn icon @click="closeChatModal" class="mr-2" here>
                 <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
             <v-spacer></v-spacer>
@@ -91,7 +91,6 @@ if (!window.webSocketClient) {
 export default {
     data() {
         return {
-            isSubscribed: false,
             roomId: this.$route.params.roomId,
             roomName: '',
             message: '',
@@ -123,7 +122,7 @@ export default {
                 } else {
                     console.log('WebSocket connection is healthy.');
                 }
-            }, 10000);  // 10초마다 연결 상태를 확인
+            }, 5000);  // 10초마다 연결 상태를 확인
         },    
 
         setSenderFromToken() {
@@ -181,7 +180,7 @@ export default {
                 connectHeaders: {
                     'Authorization': `Bearer ${token}`
                 },
-                reconnectDelay: 5000, //
+                reconnectDelay: 10000, //
                 onConnect: () => {
                     console.log('WebSocket 이 연결되었습니다.');
                     window.webSocketClient = this.client; // 전역 설정
@@ -230,7 +229,6 @@ export default {
             this.client.subscribe(`/topic/room/${this.roomId}`, (message) => {
                 const receivedMessage = JSON.parse(message.body);
                 this.messages.push(receivedMessage);
-                this.isSubscribed = true;//
                 this.$nextTick(() => {
                     this.scrollToBottom();
                 });
@@ -257,7 +255,7 @@ export default {
             });
         },
         sendMessage() {
-            if (this.message.trim() !== '' && this.isSubscribed) {
+            if (this.message.trim() !== '') {
                 const chatMessage = {
                     sender: this.sender,
                     content: this.message,
