@@ -232,6 +232,9 @@ export default {
                     body: JSON.stringify(chatMessage)
                 });
                 this.message = '';
+                this.$nextTick(() => {
+                    this.scrollToBottom();
+                });
             }
         },
         formatDate(timestamp) {
