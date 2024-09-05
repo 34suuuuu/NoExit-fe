@@ -445,7 +445,7 @@ export default {
     async deleteFB(fbId) {
       try {
         const response = await axios.put(
-          `http://localhost:8080/findboard/delete/${fbId}`
+          `${process.env.VUE_APP_API_BASIC_URL}/findboard/delete/${fbId}`
         );
         console.log("삭제 완료:", response.data);
         this.showAlert("삭제 완료");
@@ -466,7 +466,7 @@ export default {
 
         // 특정 게시글의 참가자 목록 가져오기
         const attendanceResponse = await axios.get(
-          `http://localhost:8080/attendance/list/findBoard/${findBoardId}`
+          `${process.env.VUE_APP_API_BASIC_URL}/attendance/list/findBoard/${findBoardId}`
         );
 
         const attendances = attendanceResponse.data.result;
@@ -483,7 +483,7 @@ export default {
 
         // 참가 처리
         const participateResponse = await axios.put(
-          `http://localhost:8080/findboard/participate/${findBoardId}`
+          `${process.env.VUE_APP_API_BASIC_URL}/findboard/participate/${findBoardId}`
         );
 
         if (participateResponse.data.status_code === 200) {
@@ -554,7 +554,7 @@ export default {
           };
 
           const response = await axios.get(
-            "http://localhost:8080/findboard/list",
+            "${process.env.VUE_APP_API_BASIC_URL}/findboard/list",
             { params }
           );
           const resultList = response.data.result.content;
@@ -592,7 +592,7 @@ export default {
         }
 
         const response = await axios.get(
-          `http://localhost:8080/findboard/list`,
+          `${process.env.VUE_APP_API_BASIC_URL}/findboard/list`,
           { params }
         );
 

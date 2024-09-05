@@ -194,7 +194,7 @@ export default {
         console.log('Request Data:', requestData); 
 
         const response = await axios.put(
-          `http://localhost:8080/findboard/update/${this.findBoard.id}`,
+          `${process.env.VUE_APP_API_BASIC_URL}/update/${this.findBoard.id}`,
           requestData
         );
         console.log("업데이트 완료:", response.data);
@@ -211,7 +211,7 @@ export default {
     },
     async fetchStores() {
       try {
-        const response = await axios.get("http://localhost:8080/store/list");
+        const response = await axios.get("${process.env.VUE_APP_API_BASIC_URL}/store/list");
         this.stores = response.data.result;
       } catch (error) {
         console.error("Error fetching stores:", error);

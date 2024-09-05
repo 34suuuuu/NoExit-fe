@@ -76,7 +76,7 @@ export default {
   methods: {
     async fetchImminentBoards() {
       try {
-        const response = await axios.get('http://localhost:8080/findboard/imminent-closing');
+        const response = await axios.get('${process.env.VUE_APP_API_BASIC_URL}/imminent-closing');
         this.imminentBoards = response.data.result; // 서버에서 가져온 게시글 리스트
       } catch (error) {
         console.error('마감 임박 게시글을 가져오는 중 오류 발생:', error);
