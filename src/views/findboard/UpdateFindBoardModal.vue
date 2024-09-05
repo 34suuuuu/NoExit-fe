@@ -194,7 +194,7 @@ export default {
         console.log('Request Data:', requestData); 
 
         const response = await axios.put(
-          `${process.env.VUE_APP_API_BASIC_URL}/update/${this.findBoard.id}`,
+          `${process.env.VUE_APP_API_BASIC_URL}/findboard/update/${this.findBoard.id}`,
           requestData
         );
         console.log("업데이트 완료:", response.data);

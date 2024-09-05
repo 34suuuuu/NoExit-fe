@@ -135,7 +135,7 @@ export default {
                 // 각 메시지에 대해 추가 정보 요청
                 for (let message of this.messages) {
                     if (message.sender !== this.sender && message.type !== 'JOIN') {
-                        const userResponse = await axios.get(`${process.env.VUE_APP_API_BASIC_URL}/users/${message.sender}`);
+                        const userResponse = await axios.get(`${process.env.VUE_APP_API_BASIC_URL}/member/${message.sender}`);
                         message.senderProfileImage = userResponse.data.profileImage; // 프로필 이미지 URL
                         message.senderName = userResponse.data.name; // 사용자 이름
                     }
@@ -212,6 +212,9 @@ export default {
                     body: JSON.stringify(chatMessage)
                 });
                 this.message = '';
+                this.$nextTick(() => {
+                this.scrollToBottom();
+            });
             }
         },
         formatDate(timestamp) {
