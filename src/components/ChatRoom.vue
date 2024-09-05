@@ -85,7 +85,7 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
 import VueJwtDecode from "vue-jwt-decode";
-
+let webSocketClient = null;
 export default {
     data() {
         return {
@@ -157,6 +157,7 @@ export default {
                 console.error("Failed to fetch messages:", error);
             }
         },
+        
         connectWebSocket() {
             if (webSocketClient && webSocketClient.connected) {
                 console.log('WebSocket already connected.');
@@ -193,12 +194,18 @@ export default {
                     if (event.code === 403) {
                         console.error('Connection closed with 403 error. Token might be invalid or expired.');
                         this.refreshTokenAndReconnect();
-                        webSocketClient = null;  // WebSocket이 닫힌 경우 null로 설정
+                        webSocketClient = null;
                     }
                 },
                 onError: (error) => {
                     console.error('WebSocket connection error:', error);
                     webSocketClient = null;
+                },
+                beforeDestroy() {
+                    if (webSocketClient) {
+                        webSocketClient.deactivate();  // WebSocket 연결 해제
+                        webSocketClient = null;  // 해제 후 null로 설정
+                    }
                 }
             });
 
