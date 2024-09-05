@@ -88,9 +88,14 @@ export default {
                         phone_number: this.phone_number,
                         nickname: this.nickname,
                     };
-                    registerData.append("data", new Blob([JSON.stringify(data)], { type: "application/json" }));
-                    registerData.append("file", this.profileImage);
-                    await axios.post(`${process.env.VUE_APP_API_BASIC_URL}/member/create`, registerData);
+                    try {
+                        registerData.append("data", new Blob([JSON.stringify(data)], { type: "application/json" }));
+                        registerData.append("file", this.profileImage);
+                        await axios.post(`${process.env.VUE_APP_API_BASIC_URL}/member/create`, registerData);
+                    } catch (e) {
+                        alert(e.error_message);
+                    }
+
                 } else if (this.role == '점주 사용자') {
                     const data = {
                         username: this.username,
