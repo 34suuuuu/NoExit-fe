@@ -231,7 +231,7 @@ export default {
 
         subscribeToRoom() {
             const roomTopic = `/topic/room/${this.roomId}`; 
-            this.client.subscribe(`/topic/room/${this.roomId}`, (message) => {
+            this.client.subscribe(roomTopic, (message) => {
                 const receivedMessage = JSON.parse(message.body);
                 this.messages.push(receivedMessage);
                 this.$nextTick(() => {
@@ -271,6 +271,7 @@ export default {
                     destination: '/app/chat.sendMessage',
                     body: JSON.stringify(chatMessage)
                 });
+
                 this.message = '';
                 this.$nextTick(() => {
                     this.scrollToBottom();
