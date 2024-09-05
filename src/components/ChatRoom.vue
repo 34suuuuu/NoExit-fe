@@ -85,7 +85,9 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
 import VueJwtDecode from "vue-jwt-decode";
-
+if (!window.webSocketClient) {
+    window.webSocketClient = null;
+}
 export default {
     data() {
         return {
@@ -95,7 +97,7 @@ export default {
             messages: [],
             sender: '',
             client: null,
-            isWebSocketConnected: false
+            // isWebSocketConnected: false
         };
     },
     created() {
@@ -162,11 +164,14 @@ export default {
         
         connectWebSocket() {
 
-            if (this.client && this.client.connected) {
-                console.log('WebSocket already connected.');
+            if (window.webSocketClient && window.webSocketClient.connected) {
+                console.log('이미 websocket 연결이 존재합니다');
+                this.client = window.webSocketClient;  // 전역 클라이언트를 사용
+                this.subscribeToRoom();
                 return;
             }
 
+        
             const socket = new SockJS(`${process.env.VUE_APP_API_BASIC_URL}/ws-chat`);
             const token = localStorage.getItem('token');
 
@@ -177,6 +182,8 @@ export default {
                 },
                 reconnectDelay: 5000, //
                 onConnect: () => {
+                    console.log('WebSocket 이 연결되었습니다.');
+                    window.webSocketClient = this.client; // 전역 설정
                     this.subscribeToRoom();
 
                     // sessionStorage에 저장된 값이 없을 때만 join 메시지를 보냄
@@ -186,8 +193,8 @@ export default {
                     }
                 },
                 onDisconnect: () => { 
-                    this.isWebSocketConnected = false;
-                    console.error('WebSocket disconnected, attempting to reconnect...');
+                    console.error('WebSocket disconnected.');
+                    window.webSocketClient = null;
                 },
                 onStompError: (frame) => {
                     console.error('Broker reported error: ' + frame.headers['message']);
@@ -200,7 +207,7 @@ export default {
                     }
                 },
                 onError: (error) => {
-                    console.error('WebSocket connection error:', error);
+                    console.error('웹소켓 연결 에러 : ', error);
                 }
             });
 
