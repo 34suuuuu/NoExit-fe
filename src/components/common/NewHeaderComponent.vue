@@ -224,14 +224,18 @@ export default {
             }
         },
         formatDateTime(isoString) {
-            if (!isoString || isNaN(Date.parse(isoString))) {
-                return '잘못된 데이터 형식입니다.';
-            }
-            const date = new Date(isoString);
-            const formattedDate = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
-            const formattedTime = `${date.getHours().toString().padStart(2, "0")}시 ${date.getMinutes().toString().padStart(2, "0")}분`;
-            return `${formattedDate} ${formattedTime}`;
-        },
+    if (!isoString || isNaN(Date.parse(isoString))) {
+        return '잘못된 데이터 형식입니다.';
+    }
+    const date = new Date(isoString);
+
+    // 9시간 더하기
+    date.setHours(date.getHours() + 9);
+
+    const formattedDate = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+    const formattedTime = `${date.getHours().toString().padStart(2, "0")}시 ${date.getMinutes().toString().padStart(2, "0")}분`;
+    return `${formattedDate} ${formattedTime}`;
+},
         isActive(path) {
             return this.$route.path === path;
         },
