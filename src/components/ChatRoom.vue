@@ -163,57 +163,55 @@ export default {
         },
         
         connectWebSocket() {
+    if (window.webSocketClient && window.webSocketClient.connected) {
+        console.log('이미 websocket 연결이 존재합니다');
+        this.client = window.webSocketClient;  // 전역 클라이언트를 사용
+        this.subscribeToRoom();
+        return;
+    }
 
-            if (window.webSocketClient && window.webSocketClient.connected) {
-                console.log('이미 websocket 연결이 존재합니다');
-                this.client = window.webSocketClient;  // 전역 클라이언트를 사용
-                this.subscribeToRoom();
-                return;
-            }
+    const socket = new SockJS(`${process.env.VUE_APP_API_BASIC_URL}/ws-chat`);
+    const token = localStorage.getItem('token');
 
-        
-            const socket = new SockJS(`${process.env.VUE_APP_API_BASIC_URL}/ws-chat`);
-            const token = localStorage.getItem('token');
-
-            this.client = new Client({
-                webSocketFactory: () => socket,
-                connectHeaders: {
-                    'Authorization': `Bearer ${token}`
-                },
-                reconnectDelay: 5000, //
-                onConnect: () => {
-                    console.log('WebSocket 이 연결되었습니다.');
-                    window.webSocketClient = this.client; // 전역 설정
-                    this.subscribeToRoom();
-                    this.ensureRoomSubscription(this.roomId);
-
-                    // sessionStorage에 저장된 값이 없을 때만 join 메시지를 보냄
-                    if (!sessionStorage.getItem(`joined_${this.roomId}`)) {
-                        this.joinRoom();
-                        sessionStorage.setItem(`joined_${this.roomId}`, true);
-                    }
-                },
-                onDisconnect: () => { 
-                    console.error('WebSocket disconnected.');
-                    window.webSocketClient = null;
-                },
-                onStompError: (frame) => {
-                    console.error('Broker reported error: ' + frame.headers['message']);
-                    console.error('Additional details: ' + frame.body);
-                },
-                onWebSocketClose: (event) => {
-                    if (event.code === 403) {
-                        console.error('Connection closed with 403 error. Token might be invalid or expired.');
-                        this.refreshTokenAndReconnect();
-                    }
-                },
-                onError: (error) => {
-                    console.error('웹소켓 연결 에러 : ', error);
-                }
-            });
-
-            this.client.activate();
+    this.client = new Client({
+        webSocketFactory: () => socket,
+        connectHeaders: {
+            'Authorization': `Bearer ${token}`
         },
+        reconnectDelay: 5000, // 재연결 지연시간
+        onConnect: () => {
+            console.log('WebSocket 연결되었습니다.');
+            window.webSocketClient = this.client; // 전역 설정
+            this.subscribeToRoom();
+            this.ensureRoomSubscription(this.roomId);  // Redis 구독 복원
+
+            if (!sessionStorage.getItem(`joined_${this.roomId}`)) {
+                this.joinRoom();
+                sessionStorage.setItem(`joined_${this.roomId}`, true);
+            }
+        },
+        onDisconnect: () => {
+            console.error('WebSocket disconnected.');
+            window.webSocketClient = null;
+        },
+        onStompError: (frame) => {
+            console.error('Broker reported error: ' + frame.headers['message']);
+            console.error('Additional details: ' + frame.body);
+        },
+        onWebSocketClose: (event) => {
+            if (event.code === 403) {
+                console.error('Connection closed with 403 error. Token might be invalid or expired.');
+                this.refreshTokenAndReconnect();
+            }
+        },
+        onError: (error) => {
+            console.error('웹소켓 연결 에러 : ', error);
+        }
+    });
+
+    this.client.activate();
+},
+
 
         ensureRoomSubscription(roomId) {
             axios.post(`${process.env.VUE_APP_API_BASIC_URL}/chat/ensure-subscription`, { roomId })
@@ -234,6 +232,23 @@ export default {
                 });
             });
         },
+
+        cleanUpWebSocket() {
+            if (this.client) {
+                this.client.deactivate();
+            }
+        },
+        ensureRoomSubscription(roomId) {
+            axios.post(`${process.env.VUE_APP_API_BASIC_URL}/chat/ensure-subscription`, { roomId })
+                .then(() => {
+                    console.log('Room subscription ensured');
+                })
+                .catch(error => {
+                    console.error('Failed to ensure room subscription:', error);
+                });
+        },
+
+
         joinRoom() {
             const joinMessage = {
                 sender: this.sender,
