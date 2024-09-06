@@ -119,23 +119,31 @@ export default {
       gameListAll: [],
     };
   },
+  watch: {
+  myWishList(newVal) {
+    // myWishList가 업데이트될 때 slicedWishList도 업데이트
+    this.slicedWishList = newVal.slice(0, 4);
+    console.log("필터링된 slicedWishList:", this.slicedWishList);
+  }
+},
   created() {
     this.fetchBestList();
     this.loadGameList(); // 로그인 여부와 상관없이 게임 리스트는 항상 로드
+    
     if (this.token) {
-      console.log("토큰이 존재합니다. 로그인 상태로 설정합니다.");
-      this.isLoggedIn = true; // 토
+      // console.log("토큰이 존재합니다. 로그인 상태로 설정합니다.");
+      this.isLoggedIn = true;
       this.fetchMyInfo();
       this.loadWishList();
     } else {
       console.log("로그인 해주세요");
     }
-    console.log("created() - 종료");
+    // console.log("created() - 종료");
   },
   methods: {
     async fetchMyInfo() {
       if (!this.token) {
-        console.log("토큰이 없어 사용자 정보를 요청하지 않습니다.");
+        // console.log("토큰이 없어 사용자 정보를 요청하지 않습니다.");
         return;
       }
 
@@ -147,7 +155,7 @@ export default {
           }
         );
         this.myInfo = response.data.result;
-        console.log("fetchMyInfo - 사용자 정보:", this.myInfo);
+        // console.log("fetchMyInfo - 사용자 정보:", this.myInfo);
       } catch (e) {
         console.error("Failed to fetch user info:", e);
       }
@@ -213,20 +221,22 @@ export default {
       return this.wishList.some((wish) => wish.gameId === gameId);
     },
     filterMyWishList() {
-      if (this.token && this.wishList.length > 0) {
-        this.myWishList = this.gameList.filter((game) =>
-          this.wishList.some(
-            (wish) =>
-              wish.gameId === game.id && wish.memberId === this.myInfo.id
-          )
-        );
-        this.slicedWishList = this.myWishList.slice(0, 4);
-        console.log("필터링된 위시리스트:", this.slicedWishList);
-      } else {
-        this.myWishList = [];
-        this.slicedWishList = [];
-      }
-    },
+  if (this.token) {
+    setTimeout(() => {
+      this.myWishList = this.gameList.filter((game) =>
+        this.wishList.some(
+          (wish) =>
+            wish.gameId === game.id && wish.memberId === this.myInfo.id
+        )
+      );
+      this.slicedWishList = this.myWishList.slice(0, 4);
+      console.log("1초 딜레이 후 필터링된 위시리스트:", this.slicedWishList);
+    }, 50); 
+  } else {
+    this.myWishList = [];
+    this.slicedWishList = [];
+  }
+},
     async loadGameList() {
 
       if (this.isLoading || this.isLastPage) {
