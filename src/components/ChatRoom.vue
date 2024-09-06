@@ -1,7 +1,7 @@
 <template>
     <v-container class="chat-room-container">
         <v-toolbar flat color="#1b1b1b" dark>
-            <v-btn icon @click="closeChatModal" class="mr-2" here>
+            <v-btn icon @click="closeChatModal" class="mr-2" her>
                 <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
             <v-spacer></v-spacer>
@@ -295,6 +295,7 @@ export default {
         },
         closeChatModal() {
             this.$emit('close');
+            this.$router.push("/");
         }
     }
 };
@@ -478,5 +479,15 @@ export default {
 
 .message-list::-webkit-scrollbar-thumb:hover {
     background-color: #ff3385;
+}
+
+.bubble-join {
+    color: #ffffff;
+    /* 텍스트 색상 변경 */
+    opacity: 0.8;
+    border-radius: 20px;
+    padding: 5px 10px;
+    max-width: 100%;
+    background-color: transparent;
 }
 </style>
