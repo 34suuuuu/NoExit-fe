@@ -481,13 +481,31 @@ export default {
     background-color: #ff3385;
 }
 
+/* JOIN 메시지 스타일 */
+.join-message {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+    max-width: 100%;
+}
+
+.join-message-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+}
+
 .bubble-join {
-    color: #ffffff;
-    /* 텍스트 색상 변경 */
+    color: white;
     opacity: 0.8;
     border-radius: 20px;
     padding: 5px 10px;
-    max-width: 100%;
+    max-width: fit-content;
     background-color: transparent;
+    text-align: center;
+    margin: 0 auto;
+    /* 중앙 정렬을 위한 추가 */
 }
 </style>

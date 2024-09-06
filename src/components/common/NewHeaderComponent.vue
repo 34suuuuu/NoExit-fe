@@ -1,16 +1,18 @@
 <template>
     <v-app-bar app class="px-4" style=" background-color: #1b1b1b; color:#ffffff;">
         <v-toolbar-title class="d-flex align-center title-style">
-            <router-link to="/" class="title-btn" :class="{ active: isActive('/') }">NoExit</router-link>
+            <router-link to="/" class="title-btn" :class="{ active: isActive('/') }"
+                @click="refreshPage('/')">NoExit</router-link>
             <v-divider class="mx-3" vertical></v-divider>
             <router-link v-if="userRole === 'USER'" to="/board/list" class="link-btn"
-                :class="{ active: isActive('/board/list') }">Board</router-link>
+                :class="{ active: isActive('/board/list') }" @click="refreshPage('/board/list')">Board</router-link>
             <router-link v-if="userRole === 'USER'" to="/findboard" class="link-btn"
-                :class="{ active: isActive('/findboard') }">Escape-With-Me</router-link>
+                :class="{ active: isActive('/findboard') }"
+                @click="refreshPage('/findboard')">Escape-With-Me</router-link>
             <router-link v-if="userRole === 'USER'" to="/ranking" class="link-btn"
-                :class="{ active: isActive('/ranking') }">Ranking</router-link>
+                :class="{ active: isActive('/ranking') }" @click="refreshPage('/ranking')">Ranking</router-link>
             <router-link v-if="userRole === 'OWNER'" to="/resview" class="link-btn"
-                :class="{ active: isActive('/resview') }">Reservation</router-link>
+                :class="{ active: isActive('/resview') }" @click="refreshPage('/resview')">Reservation</router-link>
         </v-toolbar-title>
         <v-spacer></v-spacer>
 
@@ -20,19 +22,20 @@
         <v-btn icon>
             <v-icon size="27px">mdi-message-reply-text-outline</v-icon>
             <v-menu activator="parent" offset-y>
-                <v-list-item>
+                <v-list-item style="background-color:#ff0066;">
                     <v-list-item-content>
-                        <v-list-item-title class="mdi-notification-title">
+                        <v-list-item-title style="background-color:#ff0066;">
                             채팅
                         </v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
 
-                <v-divider style="background-color: #fff;"></v-divider>
+                <v-divider style=" background-color: #fff;"></v-divider>
                 <v-list max-width="600" max-height="400" v-if="chatRooms.length > 0"
                     style="overflow-y: auto; background-color:#1b1b1b">
 
-                    <v-list-item v-for="room in chatRooms" :key="room.id" @click="enterRoom(room.roomId)">
+                    <v-list-item v-for="room in chatRooms" :key="room.id" @click="enterRoom(room.roomId)"
+                        class="chattingroom-item">
                         <v-list-item-content>
                             <!-- <v-list-item-title>{{ room.message }}</v-list-item-title>
                             <v-list-item-text style="color: #919191; font-weight: 300; font-size:14px">{{
@@ -202,13 +205,14 @@ export default {
         },
         routingList(notification) {
             if (notification.type === 'COMMENT' || notification.type === 'BOARD_LIKE' || notification.type === 'COMMENT_LIKE') {
-                this.$router.push(`/board/detail/${notification.notification_id}`);
+                window.location.href = `/board/detail/${notification.notification_id}`;
             } else if (notification.type === 'CHAT_ROOM_INVITE') {
-                this.enterRoom(notification.notification_id)
+                // this.enterRoom(notification.notification_id)
+                window.location.href = `/chat/rooms/${notification.notification_id}`;
             } else if (notification.type === 'RESERVATION_REQ') {   // 점주
-                this.$router.push(`/resview`);
+                window.location.href = `/resview`;
             } else if (notification.type === 'RESERVATION_RES') {   // 사용자
-                this.$router.push(`/reservation/myreservation`);
+                window.location.href = `/reservation/myreservation`;
             }
         },
         async fetchChatList() {
@@ -224,18 +228,18 @@ export default {
             }
         },
         formatDateTime(isoString) {
-    if (!isoString || isNaN(Date.parse(isoString))) {
-        return '잘못된 데이터 형식입니다.';
-    }
-    const date = new Date(isoString);
+            if (!isoString || isNaN(Date.parse(isoString))) {
+                return '잘못된 데이터 형식입니다.';
+            }
+            const date = new Date(isoString);
 
-    // 9시간 더하기
-    date.setHours(date.getHours() + 9);
+            // 9시간 더하기
+            date.setHours(date.getHours() + 9);
 
-    const formattedDate = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
-    const formattedTime = `${date.getHours().toString().padStart(2, "0")}시 ${date.getMinutes().toString().padStart(2, "0")}분`;
-    return `${formattedDate} ${formattedTime}`;
-},
+            const formattedDate = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+            const formattedTime = `${date.getHours().toString().padStart(2, "0")}시 ${date.getMinutes().toString().padStart(2, "0")}분`;
+            return `${formattedDate} ${formattedTime}`;
+        },
         isActive(path) {
             return this.$route.path === path;
         },
@@ -248,7 +252,24 @@ export default {
             this.chatRooms = [];
         },
         enterRoom(roomId) {
-            this.$router.push(`/chat/rooms/${roomId}`);
+            // const currentPath = this.$route.path;
+            // const targetPath = `/chat/rooms/${roomId}`;
+
+            // if (currentPath === targetPath) {
+
+            //     window.location.reload();
+            // } else {
+            //     // 다른 경로로 이동
+            //     this.$router.push(targetPath);
+            // }
+            window.location.href = `/chat/rooms/${roomId}`;
+        },
+        refreshPage(route) {
+            if (this.$route.path === route) {
+                window.location.reload();
+            } else {
+                this.$router.push(route);
+            }
         },
         handleNavigation(notification) {
             switch (notification.type) {
@@ -360,7 +381,8 @@ export default {
     color: #919191;
 }
 
-.notification-title {
+.notification-title,
+.chattingroom-title {
     color: #ffffff;
     font-weight: 900;
 }
@@ -400,7 +422,6 @@ export default {
 .notification-item {
     border-radius: 10px !important;
     border: 2px solid #FF0066;
-    /* 테두리 추가 */
     padding: 10px;
     margin-bottom: 10px;
 }
@@ -410,5 +431,10 @@ export default {
     filter: grayscale(100%);
 }
 
-.title-btn {}
+.chattingroom-item {
+    border-radius: 10px !important;
+    border: 1px solid #919191;
+    padding: 10px;
+    margin-bottom: 10px;
+}
 </style>

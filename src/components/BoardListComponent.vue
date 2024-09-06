@@ -5,64 +5,40 @@
         <v-form @submit.prevent="searchBoards">
           <v-row>
             <v-col cols="auto">
-              <v-select
-                v-model="searchType"
-                :items="searchOptions"
-                item-title="text"
-                item-value="value"
-                dense
-                style="background-color: white; color: white;"
-              >
+              <v-select v-model="searchType" :items="searchOptions" item-title="text" item-value="value" dense
+                style="color:#ffffff">
               </v-select>
             </v-col>
             <v-col>
-              <v-text-field
-                v-model="searchValue"
-                label="Search"
-                :rules="[required]"
-                dense
-                style="background-color: white; color: white;"
-              ></v-text-field>
+              <v-text-field v-model="searchValue" label="Search" :rules="[required]" dense
+                style="color:#ffffff; background-color: #1b1b1b"></v-text-field>
             </v-col>
             <v-col cols="auto">
-                <v-col cols="auto">
-                  <v-row>
-              <v-btn 
-              height="60"
-              type="submit" 
-              color="pink"
-              >검색</v-btn>
-               <v-spacer></v-spacer>
-                                 <v-btn
-                    height="60"
-                    color="pink"
-                    style="margin-left: 8px"
-                    href="/board/create"
-
-                    >작성하기</v-btn
-                  >
-                  </v-row>
-                </v-col>
+              <v-col cols="auto">
+                <v-row>
+                  <v-btn height="60" type="submit" color="pink">검색</v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn height="60" color="pink" style="margin-left: 8px" href="/board/create">작성하기</v-btn>
+                </v-row>
+              </v-col>
             </v-col>
           </v-row>
         </v-form>
       </v-col>
     </v-row>
-       
+
     <v-row>
       <v-col>
         <v-card style="background-color: #1b1b1b;">
 
 
 
-<!-- v-table 형식 (원래) -->
+          <!-- v-table 형식 (원래) -->
 
-          <v-table
-            style="
+          <v-table style="
               background-color: #1b1b1b;
               color: white;">
-            <thead
-              style="color: white;">
+            <thead style="color: white;">
               <tr>
                 <th style="text-align: center">카테고리</th>
                 <th style="text-align: center">제목</th>
@@ -73,69 +49,47 @@
                 <th style="text-align: center">댓글수</th>
               </tr>
             </thead>
-            <tbody
-              style="
+            <tbody style="
                 color: white;
                 border: 1px solid white;
-              "
-            >
+              ">
               <tr v-for="b in boardList" :key="b.id" @click="redirectToDetail(b.id)">
                 <td style="text-align: center">
-                  <v-chip
-                    class="custom-chip"
-                    :color="getChipColor(b.boardType)"
-                    text-color="white"
-                    style="margin-right: 8px;"
-                  >
+                  <v-chip class="custom-chip" :color="getChipColor(b.boardType)" text-color="white"
+                    style="margin-right: 8px;">
                     {{ b.boardType }}
                   </v-chip>
                 </td>
                 <td style="width: 450px; text-align: center">
-          
-                    {{ b.title }}<v-icon v-if="b.img" size="20" color="white">mdi-image-outline</v-icon>
-                 
-                  </td>
+
+                  {{ b.title }}<v-icon v-if="b.img" size="20" color="white">mdi-image-outline</v-icon>
+
+                </td>
                 <td style="text-align: center">{{ b.writer }}</td>
                 <td style="text-align: center">{{ b.createdDate }}</td>
                 <td style="text-align: center">{{ b.boardHits }}</td>
                 <td style="text-align: center">{{ b.likes }}</td>
                 <td style="text-align: center">{{ b.comments }}</td>
-                
+
               </tr>
               <v-divider :thickness="6"></v-divider>
             </tbody>
-          </v-table> 
+          </v-table>
           <v-col cols="12">
             <div class="pagination-controls text-center">
-              <span
-                class="pagination-arrow"
-                @click="prevPageRange"
-                :class="{ disabled: currentPageRangeStart <= 1 }"
-              >
+              <span class="pagination-arrow" @click="prevPageRange" :class="{ disabled: currentPageRangeStart <= 1 }">
                 <v-icon small>
                   {{
-                    currentPageRangeStart <= 1
-                      ? "mdi-menu-left"
-                      : "mdi-chevron-left"
-                  }}
-                </v-icon>
+                    currentPageRangeStart <= 1 ? "mdi-menu-left" : "mdi-chevron-left" }} </v-icon>
               </span>
 
-              <span
-                v-for="page in visiblePages"
-                :key="page"
-                @click="setPage(page)"
-                :class="{ 'active-page': currentPage === page }"
-                class="pagination-page"
-              >
+              <span v-for="page in visiblePages" :key="page" @click="setPage(page)"
+                :class="{ 'active-page': currentPage === page }" class="pagination-page">
                 {{ page }}
               </span>
 
-              <span
-                class="pagination-arrow"
-                @click="nextPageRange"
-                :class="{ disabled: currentPageRangeEnd >= totalPages }"
-              >
+              <span class="pagination-arrow" @click="nextPageRange"
+                :class="{ disabled: currentPageRangeEnd >= totalPages }">
                 <v-icon small>
                   {{
                     currentPageRangeEnd >= totalPages
@@ -210,7 +164,7 @@ export default {
         };
         if (this.searchType === "title") {
           params.searchTitle = this.searchValue;
-        }else if(this.searchType === "contents") {
+        } else if (this.searchType === "contents") {
           params.searchContents = this.searchValue;
         } else if (this.searchType === "boardType") {
           params.searchBoardType = this.searchValue;
@@ -288,45 +242,51 @@ export default {
 
 
 .v-list-item {
-    padding: 10px 30px;
+  padding: 10px 30px;
 }
 
 .custom-list-item {
-    padding: 30px;
-    transition: transform 0.2s ease-in-out;
+  padding: 30px;
+  transition: transform 0.2s ease-in-out;
 }
 
 
 .v-list-item-title {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .v-list-item-subtitle {
-    font-size: 14px;
+  font-size: 14px;
 
 }
 
 
 
 .custom-select .v-select__selection {
-  background-color: #f8d7da; /* Custom background color */
-  color: #000; /* Custom text color */
+  background-color: #f8d7da;
+  /* Custom background color */
+  color: #000;
+  /* Custom text color */
 }
 
 .custom-select .v-select__slot {
-  border: 1px solid #e91e63; /* Custom border color */
+  border: 1px solid #e91e63;
+  /* Custom border color */
 }
 
 .custom-select .v-select__selections {
-  background-color: #f8d7da; /* Ensure selections background is consistent */
+  background-color: #f8d7da;
+  /* Ensure selections background is consistent */
 }
 
 .custom-select .v-select__menu {
-  background-color: #f8d7da; /* Menu background color */
+  background-color: #f8d7da;
+  /* Menu background color */
 }
 
 .custom-select .v-select__item {
-  color: #000; /* Item text color */
+  color: #000;
+  /* Item text color */
 }
 
 
