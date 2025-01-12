@@ -190,11 +190,11 @@ NoExit은 참가 인원을 모집하고 함께 방탈출을 해결해 나갈 수
 
 #### 예약 요청 ,(점주)예약 거절 및 승인
 
-<img src="./img/예약/에약처리로직.gif"/>
+<img src="./img/reservation/에약처리로직.gif"/>
 
 #### 리뷰 작성 , 조회 , 수정 , 삭제
 
-<img src="./img/예약/리뷰수정삭제.gif"/>
+<img src="./img/reservation/리뷰수정삭제.gif"/>
 
 </details>
 
@@ -204,16 +204,15 @@ NoExit은 참가 인원을 모집하고 함께 방탈출을 해결해 나갈 수
 
 #### 모집글 조회, 작성, 수정, 삭제 기능 
 
-<img src="./img/Withme/게시글CRUD.gif"/>
+<img src="./img/Withme/게시글조회작성수정삭제.gif"/>
 
 
-#### 모집글 참여, 뱃지, 채팅방 생성 
+#### 모집글 참여시 채팅방 생성 
+
+<img src="./img/Withme/참여.gif"/>
 
 <img src="./img/Withme/참여채팅방알림.gif"/>
 
-#### 모집글 페이징, 참여하기 
-
-<img src="./img/Withme/참여.gif"/>
 
 #### 모집글 검색 기능 
 
@@ -242,9 +241,6 @@ NoExit은 참가 인원을 모집하고 함께 방탈출을 해결해 나갈 수
 
 <img src="./img/Board/게시글좋아요싫어요.gif"/>
 
-#### 댓글 작성 및 수정
-
-#### 댓글 추천/비추천 
 
 </details>
 
@@ -254,15 +250,15 @@ NoExit은 참가 인원을 모집하고 함께 방탈출을 해결해 나갈 수
 
 #### 위시리스트 생성 
 
-<img src="./img/Wishlist/위시리스트찜추가확인.gif"/>
+<img src="./img/wish/위시리스트찜추가확인.gif"/>
 
 #### 위시리스트 삭제
 
-<img src="./img/Wishlist/위시리스트삭제.gif"/>
+<img src="./img/wish/위시리스트삭제.gif"/>
 
 #### 마이페이지 위시리스트
 
-<img src="./img/Wishlist/마이페이지.gif"/>
+<img src="./img/wish/마이페이지.gif"/>
 
 
 </details>
